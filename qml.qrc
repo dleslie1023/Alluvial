@@ -2,5 +2,8 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>MainForm.ui.qml</file>
+        <file>ItemDetailView.qml</file>
+        <file>ItemDetailViewForm.ui.qml</file>
+        <file>container-background.jpg</file>
     </qresource>
 </RCC>
