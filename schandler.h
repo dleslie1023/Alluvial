@@ -21,10 +21,11 @@ class SCHandler
 {
 
 private:
-    QJsonDocument last_search;
-public:
-    QJsonArray results;
 
+public:
+    QJsonArray raw_results;
+    QJsonArray clean_results;
+    QJsonObject last_search;
     SCHandler();
     ~SCHandler();
 
@@ -41,7 +42,9 @@ public:
      \return an integer value denoting the number of search results found
              or -1 in the case of a failed query
     */
-    int query(QString request);
+    int query(QString value, QString key);
+
+    QJsonObject format(QJsonValue initial);
 
     //void connect(QString uname, QString pword);
 
@@ -59,7 +62,7 @@ public:
                     to which to save the file
      \return an integer value denoting the size of the file or -1 for an unsuccessful request
     */
-    int request_song(QString song_id);
+    int request_song(QString download_url, QString target);
 
 };
 #endif // SCHANDLER_H

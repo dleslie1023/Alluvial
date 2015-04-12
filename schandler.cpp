@@ -16,7 +16,8 @@
 
 SCHandler::SCHandler()
 {
-    results = QJsonArray();
+    raw_results = QJsonArray();
+    clean_results = QJsonArray();
 
 }
 
@@ -29,7 +30,12 @@ SCHandler::~SCHandler()
 
 //category: artist, title, user,
 int SCHandler::query(QString value, QString key = "title"){
-    last_search = QJsonDocument(QJsonDocument::fromJson(QString("{"+key+","+value+"}").toUtf8()));
+    QJsonObject last_search{
+        {key, value}
+    };
+
+    //check to prevent same query twice?
+
     // create custom temporary event loop on stack
     QEventLoop eventLoop;
     QUrl url(SC_TRACKS_URL);
@@ -40,10 +46,11 @@ int SCHandler::query(QString value, QString key = "title"){
     //loop to pull out queries
 
     query.addQueryItem(key, value);
-    query.addQueryItem("downloadable", "true");
+    query.addQueryItem("downloadable","true");
 
 
     url.setQuery(query.query());
+    qDebug() << url;
 
     // "quit()" the event-loop, when the network request "finished()"
     QNetworkAccessManager mgr;
@@ -57,8 +64,9 @@ int SCHandler::query(QString value, QString key = "title"){
     if (reply->error() == QNetworkReply::NoError) {
         QJsonParseError err;
         QJsonDocument jsondoc = QJsonDocument(QJsonDocument::fromJson(QString(reply->readAll()).toUtf8(), &err)); //raw string to qtstring to bytecode to jsondoc fucking shit
-        results = jsondoc.array(); //take the pile of responses and make them an array so you can fucking do something with the
-        return results.size();
+        raw_results = jsondoc.array(); //take the pile of responses and make them an array so you can fucking do something with the
+
+        return raw_results.size();
 
     }
     else {
@@ -69,45 +77,31 @@ int SCHandler::query(QString value, QString key = "title"){
     }
 }
 
-//not working
-//void SCHandler::connect(QString uname, QString pword){
-//    QEventLoop eventLoop;
-//    QUrl url("https://api.soundcloud.com/tracks");
-//    QUrlQuery query;
+QJsonObject SCHandler::format(QJsonValue initial){
+    QJsonObject jobj = initial.toObject();
+    QJsonObject media{
+        {"hash",""}, //TODO: add hash functions
+        {"order",""},
+    };
+    qDebug() << jobj["user"].toString();
+    QJsonObject meta{
+        {"title", jobj["title"].toString()},
+        {"album",""}, //nope because soundcloud
+        {"artist", jobj["user"].toObject()["username"].toObject()},
+        {"track_number", 0},
+        {"length", 0},
+        {"genre", jobj["genre"].toString()}
 
-//    //client_id
-//    query.addQueryItem("client_id", SC_CLIENT_ID);
-//    //secret
-//    query.addQueryItem("client_secret", SC_CLIENT_SECRET);
-//    //uname
+    };
+    //add meta to media
+    media["metadata"] = meta;
 
-//    //pword
+    raw_results.at(0).toObject()[].to
 
-//    //redirect_uri
+    return media;
+}
 
-//    url.setQuery(query.query());
-
-//    QNetworkAccessManager mgr;
-//    QObject::connect(&mgr, SIGNAL(finished(QNetworkReply*)), &eventLoop, SLOT(quit()));
-
-//    QNetworkRequest req(url);
-//    QNetworkReply *reply = mgr.get(req);
-//    eventLoop.exec(); // blocks stack until "finished()" has been called
-
-//    if (reply->error() == QNetworkReply::NoError) {
-//        qDebug() << "Success: " << reply->readAll();
-//        delete reply;
-
-//    }
-//    else {
-//        //failure
-//        qDebug() << "Failure" <<reply->errorString();
-//        delete reply;
-//    }
-
-//}
-
-int SCHandler::request_song(QString download_url, QString target="./"){
+int SCHandler::request_song(QString download_url, QString target){
 
     // create custom temporary event loop on stack
     QNetworkRequest request;
@@ -159,7 +153,7 @@ int SCHandler::request_song(QString download_url, QString target="./"){
             file.write(reply->readAll());
             delete reply;
             return file.size();
-
+        }
         else{
             qDebug() << "Failure on download request" <<reply->errorString();
             delete reply;
