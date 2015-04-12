@@ -1,12 +1,20 @@
-#include <QApplication>
-#include <QQmlApplicationEngine>
+#include "databasehandler.h"
 
-int main(int argc, char *argv[])
-{
-    QApplication app(argc, argv);
 
-    QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/ItemDetailView.qml")));
+int main(){
 
-    return app.exec();
+    QJsonObject test;
+    QString query = "Red Hot Chili Peppers";
+    JSONHandler *json = new JSONHandler();
+    test = json->generateResults(query);
+
+
+//    dub->DBInit();
+//    result = dub->queryDB(querySong);
+//    std::cout << result;
+
+
+
+    return 0;
 }
+
