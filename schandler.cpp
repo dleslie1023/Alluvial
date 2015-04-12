@@ -29,7 +29,7 @@ SCHandler::~SCHandler()
 
 //category: artist, title, user,
 int SCHandler::query(QString value, QString key = "title"){
-    last_search = QJsonDocument(QJsonDocument::fromJson(QString("{"+key+","+value+"}")));
+    last_search = QJsonDocument(QJsonDocument::fromJson(QString("{"+key+","+value+"}").toUtf8()));
     // create custom temporary event loop on stack
     QEventLoop eventLoop;
     QUrl url(SC_TRACKS_URL);
