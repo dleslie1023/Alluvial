@@ -22,6 +22,7 @@ HEADERS += \
     databasehandler.h \
     JSONhandler.h \
     queryhandler.h
+CONFIG += c++11
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../usr/lib/x86_64-linux-gnu/release/ -ltag
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../usr/lib/x86_64-linux-gnu/debug/ -ltag

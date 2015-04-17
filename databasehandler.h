@@ -5,38 +5,26 @@
 #include <taglib/tag.h>
 #include <taglib/tpropertymap.h>
 #include <taglib/tstring.h>
+#include <QDebug>
 #include <QDir>
-#include <QString>
-#include <QDirIterator>
-#include <QFlag>
 #include <QMimeDatabase>
-#include <iostream>
-#include <iomanip>
-#include <stdio.h>
-#include <QObject>
 #include <QSqlDatabase>
-#include <QSqlError>
-#include <QFile>
-#include <QObject>
-#include <QSqlDatabase>
+#include <QJsonObject>
 #include <QSqlError>
 #include <QSqlQuery>
-#include <QStringList>
-#include <QVariant>
-#include <vector>
-#include <JSONhandler.h>
-
+#include <QDirIterator>
+#include <stdlib.h>
 using std::string;
 
 //struct that contains needed metadata in QString and uint
 struct MD{
 
     QString filepath, artist, album, title, genre;
-    signed int year, track_num, length_min, length_sec;
+    signed int PKID, track_num, length_min, length_sec;
 };
 
 
-class DatabaseHandler
+class DatabaseHandler : public QObject
 {
 public:
     DatabaseHandler();

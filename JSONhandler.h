@@ -1,10 +1,13 @@
 #ifndef JSONHANDLER_H
 #define JSONHANDLER_H
-#include <databasehandler.h>
+
+#include "databasehandler.h"
 #include <QJsonObject>
+#include <QDebug>
 
 
-class JSONHandler
+
+class JSONHandler : public QObject
 {
 public:
     JSONHandler();

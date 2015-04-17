@@ -40,7 +40,7 @@ MD DatabaseHandler::ripMetaData(QString file)
     md.filepath = file;
     md.length_sec = length_sec;
     md.length_min = length_min;
-    md.year = year;
+    md.PKID = year;
     md.track_num = track;
     md.genre = genre;
 
@@ -157,10 +157,10 @@ void DatabaseHandler::DBpopulate(QDir dir)
               //place in database
               ret = query.exec(QString("insert into Alluvial values(NULL,'%1','%2','%3','%4','%5', %6, %7, %8, %9)")
               .arg(md.title).arg(md.artist).arg(md.album).arg(md.genre).arg(md.filepath).arg(md.track_num)
-              .arg(md.year).arg(md.length_min).arg(md.length_sec));
+              .arg(md.PKID).arg(md.length_min).arg(md.length_sec));
 
-              std::cout << md.title.toStdString() << ret << "\n";
-              std::cout << query.lastError().text().toStdString();
+              qDebug() << md.title << ret << "\n";
+              qDebug() << query.lastError().text();
 
             }
         }
@@ -174,48 +174,24 @@ void DatabaseHandler::DBpopulate(QDir dir)
 std::vector <MD> DatabaseHandler::queryDB(QString query)
 {
     std::vector <MD> MDresult;
-    QSqlQuery sqlqueryt(QString("select * from Alluvial where title = '%1'").arg(query));
-    QSqlQuery sqlqueryar(QString("select * from Alluvial where artist = '%1'").arg(query));
-    QSqlQuery sqlqueryal(QString("select * from Alluvial where album = '%1'").arg(query));
-    while(sqlqueryt.next())
+    QSqlQuery sqlquery(QString("SELECT * FROM Alluvial WHERE title LIKE '%1'"
+                                                        "OR artist LIKE '%1'"
+                                                        "OR album LIKE '%1'").arg(query));
+    while(sqlquery.next())
     {
         MD md;
-        md.title = sqlqueryt.value(1).toString();
-        md.artist = sqlqueryt.value(2).toString();
-        md.album = sqlqueryt.value(3).toString();
-        md.genre = sqlqueryt.value(4).toString();
-        md.track_num = sqlqueryt.value(6).toInt();
-        md.length_min = sqlqueryt.value(8).toInt();
-        md.length_sec = sqlqueryt.value(9).toInt();
+        md.title = sqlquery.value(1).toString();
+        md.artist = sqlquery.value(2).toString();
+        md.album = sqlquery.value(3).toString();
+        md.genre = sqlquery.value(4).toString();
+        md.track_num = sqlquery.value(6).toInt();
+        md.length_min = sqlquery.value(8).toInt();
+        md.length_sec = sqlquery.value(9).toInt();
+        md.PKID = sqlquery.value(0).toInt();
         MDresult.insert(MDresult.end(),md);
 
     }
-    while(sqlqueryar.next())
-    {
-        MD md;
-        md.title = sqlqueryar.value(1).toString();
-        md.artist = sqlqueryar.value(2).toString();
-        md.album = sqlqueryar.value(3).toString();
-        md.genre = sqlqueryar.value(4).toString();
-        md.track_num = sqlqueryar.value(6).toInt();
-        md.length_min = sqlqueryar.value(8).toInt();
-        md.length_sec = sqlqueryar.value(9).toInt();
-        MDresult.insert(MDresult.end(),md);
 
-    }
-    while(sqlqueryal.next())
-    {
-        MD md;
-        md.title = sqlqueryal.value(1).toString();
-        md.artist = sqlqueryal.value(2).toString();
-        md.album = sqlqueryal.value(3).toString();
-        md.genre = sqlqueryal.value(4).toString();
-        md.track_num = sqlqueryal.value(6).toInt();
-        md.length_min = sqlqueryal.value(8).toInt();
-        md.length_sec = sqlqueryal.value(9).toInt();
-        MDresult.insert(MDresult.end(),md);
-
-    }
 
     return MDresult;
 }

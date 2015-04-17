@@ -1,20 +1,22 @@
-#include "databasehandler.h"
+#include "JSONhandler.h"
+
 
 
 int main(){
 
     QJsonObject test;
-    QString query = "Red Hot Chili Peppers";
+    QString query = "Kid Rock";
     JSONHandler *json = new JSONHandler();
     test = json->generateResults(query);
 
 
-//    dub->DBInit();
+
+
 //    result = dub->queryDB(querySong);
-//    std::cout << result;
+   //std::cout << result;
 
 
 
-    return 0;
+//    return 0;
 }
 
