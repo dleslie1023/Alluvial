@@ -1,24 +1,9 @@
 #include "schandler.h"
-#include <QCoreApplication>
-#include <QDebug>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QUrl>
-
-#include <QUrlQuery>
-
-#include <QStandardPaths>
-#include <QFileInfo>
-#include <QFile>
-
-
 
 SCHandler::SCHandler()
 {
     raw_results = QJsonArray();
-    clean_results = QJsonArray();
-
+    last_search = QJsonObject();
 }
 
 
@@ -29,12 +14,16 @@ SCHandler::~SCHandler()
 
 
 //category: artist, title, user,
-int SCHandler::query(QString value, QString key = "title"){
+int SCHandler::query(QString value, QString key){
     QJsonObject last_search{
         {key, value}
     };
 
-    //check to prevent same query twice?
+    if(value == NULL)
+        return -1;
+    if(key == NULL)
+        return -1;
+    //check to prevent same query twice? nah don't be dumb
 
     // create custom temporary event loop on stack
     QEventLoop eventLoop;
@@ -42,12 +31,8 @@ int SCHandler::query(QString value, QString key = "title"){
     QUrlQuery query;
     query.addQueryItem("client_id", SC_CLIENT_ID);
 
-    //switch for request type
-    //loop to pull out queries
-
-    query.addQueryItem(key, value);
     query.addQueryItem("downloadable","true");
-
+    query.addQueryItem(key, value);
 
     url.setQuery(query.query());
     qDebug() << url;
@@ -80,23 +65,20 @@ int SCHandler::query(QString value, QString key = "title"){
 QJsonObject SCHandler::format(QJsonValue initial){
     QJsonObject jobj = initial.toObject();
     QJsonObject media{
-        {"hash",""}, //TODO: add hash functions
+        {"hash",""},
         {"order",""},
     };
-    qDebug() << jobj["user"].toString();
+
     QJsonObject meta{
         {"title", jobj["title"].toString()},
         {"album",""}, //nope because soundcloud
-        {"artist", jobj["user"].toObject()["username"].toObject()},
+        {"artist", jobj["user"].toObject()["username"].toString()},
         {"track_number", 0},
-        {"length", 0},
+        {"length", ""}, //get from fucking duration
         {"genre", jobj["genre"].toString()}
-
     };
     //add meta to media
     media["metadata"] = meta;
-
-    raw_results.at(0).toObject()[].to
 
     return media;
 }
