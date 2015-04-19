@@ -12,10 +12,10 @@ JSONHandler::~JSONHandler()
 
 }
 
-QJsonObject JSONHandler::generateResults(QString query)
+QJsonArray JSONHandler::generateResults(QString query)
 {
     QJsonObject test;
-    //QJsonArray result;
+    QJsonArray result;
     std::vector <MD> MDresult;
     DatabaseHandler *dub = new DatabaseHandler();
     bool DBOpen = dub->openDB();
@@ -32,7 +32,7 @@ QJsonObject JSONHandler::generateResults(QString query)
         string stringLengthTemp = sm.str() + ":" + ss.str();
         QString qstrLength = QString::fromStdString(stringLengthTemp);
         QJsonObject media{
-            {"hash", MDresult.at(i).PKID}, //TODO: add hash functions
+            {"hash", MDresult.at(i).PKID},
             {"order",""},
         };
         QJsonObject meta{
@@ -44,9 +44,9 @@ QJsonObject JSONHandler::generateResults(QString query)
             {"genre", MDresult.at(i).genre}
         };
         media["metadata"] = meta;
-
-        qDebug() << media;
+        result.append(media);
     }
-    return test;
+    //qDebug() << result;
+    return result;
 }
 

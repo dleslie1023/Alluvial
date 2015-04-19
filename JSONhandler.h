@@ -3,6 +3,7 @@
 
 #include "databasehandler.h"
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QDebug>
 
 
@@ -12,7 +13,7 @@ class JSONHandler : public QObject
 public:
     JSONHandler();
     ~JSONHandler();
-    QJsonObject generateResults(QString query);
+    QJsonArray generateResults(QString query);
 };
 
 #endif // JSONHandler_H

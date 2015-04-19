@@ -36,6 +36,7 @@ public:
     bool createTable();
     void DBpopulate(QDir dir);
     std::vector <MD> queryDB(QString query);
+    QString getSongFP(int PKID);
     QSqlQuery query;
     QSqlDatabase db;
 private:

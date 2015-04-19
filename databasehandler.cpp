@@ -159,8 +159,8 @@ void DatabaseHandler::DBpopulate(QDir dir)
               .arg(md.title).arg(md.artist).arg(md.album).arg(md.genre).arg(md.filepath).arg(md.track_num)
               .arg(md.PKID).arg(md.length_min).arg(md.length_sec));
 
-              qDebug() << md.title << ret << "\n";
-              qDebug() << query.lastError().text();
+              //qDebug() << md.title << ret << "\n";
+              //qDebug() << query.lastError().text();
 
             }
         }
@@ -174,9 +174,9 @@ void DatabaseHandler::DBpopulate(QDir dir)
 std::vector <MD> DatabaseHandler::queryDB(QString query)
 {
     std::vector <MD> MDresult;
-    QSqlQuery sqlquery(QString("SELECT * FROM Alluvial WHERE title LIKE '%1'"
-                                                        "OR artist LIKE '%1'"
-                                                        "OR album LIKE '%1'").arg(query));
+    QSqlQuery sqlquery(QString("SELECT * FROM Alluvial WHERE title LIKE '%1%'"
+                                                        "OR artist LIKE '%1%'"
+                                                        "OR album LIKE '%1%'").arg(query));
     while(sqlquery.next())
     {
         MD md;
@@ -194,6 +194,19 @@ std::vector <MD> DatabaseHandler::queryDB(QString query)
 
 
     return MDresult;
+}
+
+QString DatabaseHandler::getSongFP(int PKID)
+{
+    QString FP;
+    QSqlQuery songFPQuery(QString("SELECT * FROM Alluvial WHERE ID = '%1'").arg(PKID));
+
+    while(songFPQuery.next()){
+        FP = songFPQuery.value(5).toString();
+    }
+
+    return FP;
+
 }
 
 

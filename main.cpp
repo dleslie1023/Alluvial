@@ -1,14 +1,19 @@
-#include "JSONhandler.h"
+#include <JSONhandler.h>
+#include <songhandler.h>
 
 
 
 int main(){
 
-    QJsonObject test;
-    QString query = "Kid Rock";
-    JSONHandler *json = new JSONHandler();
-    test = json->generateResults(query);
+//    QJsonArray test;
+//    QString query = "Anjunabeats";
+//    JSONHandler *json = new JSONHandler();
+//    test = json->generateResults(query);
+//    qDebug() << test;
 
+      int PKID = 1;
+      songHandler *song = new songHandler();
+      QByteArray test = song->getSong(PKID);
 
 
 
