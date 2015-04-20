@@ -3,7 +3,6 @@
 SCHandler::SCHandler()
 {
     raw_results = QJsonArray();
-    last_search = QJsonObject();
 }
 
 
@@ -14,10 +13,7 @@ SCHandler::~SCHandler()
 
 
 //category: artist, title, user,
-int SCHandler::query(QString value, QString key){
-    QJsonObject last_search{
-        {key, value}
-    };
+int SCHandler::query(QString key, QString value){
 
     if(value == NULL)
         return -1;
@@ -62,8 +58,26 @@ int SCHandler::query(QString value, QString key){
     }
 }
 
-QJsonObject SCHandler::format(QJsonValue initial){
+QJsonValue SCHandler::format(QJsonValue initial){
     QJsonObject jobj = initial.toObject();
+    QString length;
+    qDebug() << jobj["duration"].toInt();
+    if (jobj["duration"].toInt() > 0){
+        QString minutes;
+        QString seconds;
+        int duration = jobj["duration"].toInt()/1000; //ain't nobody got time for accuracy
+        qDebug() << duration;
+        minutes = QString::number(duration/60);
+        seconds = QString::number(duration%60);
+        qDebug() << "minutes" << minutes << " seconds" << seconds;
+        if(duration/60 < 10)
+            minutes = QString("0"+minutes);
+        if(duration%60 < 10)
+            seconds = QString("0"+seconds);
+
+        length = QString(minutes+":"+seconds);
+    }
+
     QJsonObject media{
         {"hash",""},
         {"order",""},
@@ -74,13 +88,25 @@ QJsonObject SCHandler::format(QJsonValue initial){
         {"album",""}, //nope because soundcloud
         {"artist", jobj["user"].toObject()["username"].toString()},
         {"track_number", 0},
-        {"length", ""}, //get from fucking duration
+        {"length", length}, //get from fucking duration
         {"genre", jobj["genre"].toString()}
     };
     //add meta to media
     media["metadata"] = meta;
 
-    return media;
+    return QJsonValue(media);
+}
+
+QJsonArray SCHandler::search(int count, QString value, QString key){
+    QJsonArray results = QJsonArray();
+    int num_queried = query(key, value);
+    if(count > num_queried)
+        count = num_queried;
+    for(int i=0; i<count; i++){
+        results.append(format(raw_results[i]));
+    }
+
+    return results;
 }
 
 int SCHandler::request_song(QString download_url, QString target){

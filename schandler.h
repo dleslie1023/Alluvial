@@ -31,12 +31,7 @@ class SCHandler
 {
 
 private:
-
-public:
-    QJsonObject last_search;
     QJsonArray raw_results;
-    SCHandler();
-    ~SCHandler();
 
     /*!
      \brief Queries the Soundcloud database using a key and associated
@@ -47,15 +42,19 @@ public:
             results.
 
      \param key: A QString corresponding to the key used to define the query
+                 Defaults to "title" if no key is passed
      \param value: A QString corresponding to the value used in the query
      \return an integer value denoting the number of search results found
              or -1 in the case of a failed query
     */
-    int query(QString value, QString key=QString("title"));
+    int query(QString key, QString value);
 
-    QJsonObject format(QJsonValue initial);
+    QJsonValue format(QJsonValue initial);
+public:
+    SCHandler();
+    ~SCHandler();
 
-    QJsonArray format_results(int count);
+    QJsonArray search(int count, QString value, QString key=QString("title"));
 
 
     /*!
