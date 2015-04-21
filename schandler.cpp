@@ -27,7 +27,6 @@ int SCHandler::query(QString key, QString value){
     QUrlQuery query;
     query.addQueryItem("client_id", SC_CLIENT_ID);
 
-    query.addQueryItem("download_url","https");
     query.addQueryItem(key, value);
 
     url.setQuery(query.query());
