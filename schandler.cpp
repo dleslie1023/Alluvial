@@ -27,7 +27,7 @@ int SCHandler::query(QString key, QString value){
     QUrlQuery query;
     query.addQueryItem("client_id", SC_CLIENT_ID);
 
-    query.addQueryItem("downloadable","true");
+    query.addQueryItem("download_url","https");
     query.addQueryItem(key, value);
 
     url.setQuery(query.query());
@@ -46,8 +46,13 @@ int SCHandler::query(QString key, QString value){
         QJsonParseError err;
         QJsonDocument jsondoc = QJsonDocument(QJsonDocument::fromJson(QString(reply->readAll()).toUtf8(), &err)); //raw string to qtstring to bytecode to jsondoc fucking shit
         raw_results = jsondoc.array(); //take the pile of responses and make them an array so you can fucking do something with the
+        qDebug() << raw_results;
 
-        return raw_results.size();
+//        for(int i=0;i<raw_results.size();i++){
+//            QJsonObject jobj = raw_results[i].toObject();
+//            if(jobj[])
+//        }
+//        return raw_results.size();
 
     }
     else {
@@ -89,7 +94,8 @@ QJsonValue SCHandler::format(QJsonValue initial){
         {"artist", jobj["user"].toObject()["username"].toString()},
         {"track_number", 0},
         {"length", length}, //get from fucking duration
-        {"genre", jobj["genre"].toString()}
+        {"genre", jobj["genre"].toString()},
+        {"download", jobj["download_url"].toString()}
     };
     //add meta to media
     media["metadata"] = meta;
@@ -97,20 +103,30 @@ QJsonValue SCHandler::format(QJsonValue initial){
     return QJsonValue(media);
 }
 
-QJsonArray SCHandler::search(int count, QString value, QString key){
+QJsonArray SCHandler::search(QString value, QString key){
     QJsonArray results = QJsonArray();
     int num_queried = query(key, value);
-    if(count > num_queried)
-        count = num_queried;
-    for(int i=0; i<count; i++){
+    for(int i=0; i<num_queried; i++){
         results.append(format(raw_results[i]));
     }
 
     return results;
 }
 
-int SCHandler::request_song(QString download_url, QString target){
+QJsonArray SCHandler::search(int count, QString value, QString key){
+    QJsonArray results = QJsonArray();
+    int num_queried = query(key, value);
+    if(count > num_queried)
+        count = num_queried;
+    for(int i=0; i<40; i++){
+        results.append(format(raw_results[i]));
+    }
 
+    return results;
+}
+
+QByteArray SCHandler::request_song(QString download_url, QString target){
+    QByteArray barry;
     // create custom temporary event loop on stack
     QNetworkRequest request;
     request.setRawHeader("User-Agent", USER_AGENT);
@@ -156,16 +172,17 @@ int SCHandler::request_song(QString download_url, QString target){
             QUrl aUrl(url);
             QFileInfo fileInfo=aUrl.path();
             qDebug() << fileInfo.fileName();
-            QFile file(target);
-            file.open(QIODevice::WriteOnly);
+            QFile file(target+"/"+fileInfo.fileName());
+            file.open(QIODevice::ReadWrite);
             file.write(reply->readAll());
             delete reply;
-            return file.size();
+            barry = file.readAll();
+            return barry;
         }
         else{
             qDebug() << "Failure on download request" <<reply->errorString();
             delete reply;
-            return -1;
+            return NULL;
         }
 
     }
@@ -173,7 +190,7 @@ int SCHandler::request_song(QString download_url, QString target){
         //failure
         qDebug() << "Failure on initial request" <<reply->errorString();
         delete reply;
-        return -1;
+        return NULL;
     }
 }
 

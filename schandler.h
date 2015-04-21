@@ -34,12 +34,8 @@ private:
     QJsonArray raw_results;
 
     /*!
-     \brief Queries the Soundcloud database using a key and associated
-            value. This pair corresponds to song metadata that is used
-            to request song results from Soundcloud. The search results
-            are returned are all downloadable (as set by Soundcloud) and
-            returned as an array of JSON documents (QJsonArray), populating
-            results.
+     \brief Used by search() to make the call to the Soundcloud API using
+            a QT GET request.
 
      \param key: A QString corresponding to the key used to define the query
                  Defaults to "title" if no key is passed
@@ -49,13 +45,56 @@ private:
     */
     int query(QString key, QString value);
 
+    /*!
+     \brief Used to format raw JSON from Soundcloud into the format required
+            by the MediaHandler.
+
+     \param initial: a QJsonValue from the QJsonArray returned by search()
+     \return A QJsonValue containing the JSON formatted for the MediaHandler
+    */
     QJsonValue format(QJsonValue initial);
 public:
+
+    /*!
+     \brief Constructor used to access member functions
+
+     \param NONE
+     \return NONE
+    */
     SCHandler();
     ~SCHandler();
 
-    QJsonArray search(int count, QString value, QString key=QString("title"));
+    /*!
+     \brief Searches the Soundcloud database using a key and associated
+            value. This pair corresponds to song metadata that is used
+            to request song results from Soundcloud. The search results
+            are returned are all downloadable (as set by Soundcloud) and
+            returned as an array of JSON documents (QJsonArray), populating
+            results.
 
+     \param key: A QString corresponding to the key used to define the query
+                 Defaults to "title" if no key is passed
+     \param value: A QString corresponding to the value used in the query
+     \return A QJsonArray containing media objects for all the "downloadable"
+             songs corresponding to the search
+    */
+    QJsonArray search(QString value, QString key=QString("title"));
+
+    /*!
+     \warning USE search(value, key) INSTEAD. MAY RETURN 0 RESULTS
+     \brief Searches the Soundcloud database using a key and associated
+            value. This pair corresponds to song metadata that is used
+            to request song results from Soundcloud. The search results
+            are returned are all downloadable (as set by Soundcloud) and
+            returned as an array of JSON documents (QJsonArray), populating
+            results.
+     \param count: the desired number of search results to return
+     \param key: A QString corresponding to the key used to define the query
+                 Defaults to "title" if no key is passed
+     \param value: A QString corresponding to the value used in the query
+     \return A QJsonArray containing the first "count" results
+    */
+    QJsonArray search(int count, QString value, QString key=QString("title"));
 
     /*!
      \brief Requests a song from Soundcloud using the download_url
@@ -71,7 +110,7 @@ public:
                     to which to save the file
      \return an integer value denoting the size of the file or -1 for an unsuccessful request
     */
-    int request_song(QString download_url, QString target=QString("./"));
+    QByteArray request_song(QString download_url, QString target=QString("../"));
 
 };
 #endif // SCHANDLER_H
