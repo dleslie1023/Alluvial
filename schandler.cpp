@@ -27,6 +27,7 @@ int SCHandler::query(QString key, QString value){
     QUrlQuery query;
     query.addQueryItem("client_id", SC_CLIENT_ID);
 
+    query.addQueryItem("download_url","https");
     query.addQueryItem(key, value);
 
     url.setQuery(query.query());
@@ -47,11 +48,7 @@ int SCHandler::query(QString key, QString value){
         raw_results = jsondoc.array(); //take the pile of responses and make them an array so you can fucking do something with the
         qDebug() << raw_results;
 
-//        for(int i=0;i<raw_results.size();i++){
-//            QJsonObject jobj = raw_results[i].toObject();
-//            if(jobj[])
-//        }
-//        return raw_results.size();
+    return raw_results.size();
 
     }
     else {
