@@ -1,5 +1,4 @@
 #include "JSONhandler.h"
-#include "sstream"
 
 
 JSONHandler::JSONHandler()

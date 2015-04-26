@@ -11,9 +11,12 @@ int main(){
 //    test = json->generateResults(query);
 //    qDebug() << test;
 
-      int PKID = 1;
-      songHandler *song = new songHandler();
-      QByteArray test = song->getSong(PKID);
+//      int PKID = 1;
+//      songHandler *song = new songHandler();
+//      QByteArray test = song->getSong(PKID);
+
+
+
 
 
 

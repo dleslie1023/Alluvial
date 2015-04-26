@@ -118,9 +118,8 @@ bool DatabaseHandler::createTable()
     bool ret = false;
     //clear previous usage of query, can cause out of memory if not done
     query.clear();
-    if (db.isOpen())
-        {
-        ret = query.exec("create table Alluvial "
+    if (db.isOpen()){
+        query.exec("create table Alluvial "
                           "(id integer primary key, "
                           "title varchar(30), "
                           "artist varchar(30), "
@@ -131,7 +130,16 @@ bool DatabaseHandler::createTable()
                           "year integer, "
                           "length_min integer, "
                           "length_sec integer)");
-        }
+    }
+    query.clear();
+    if (db.isOpen()){
+        query.exec("create table Playlist "
+                          "(id integer primary key, "
+                          "name varchar, "
+                          "db_pkid varchar, "
+                          "sc_urls varchar, "
+                          "sp_uris varchar)");
+    }
     //check to make sure tables created
     std::cout << query.lastError().text().toStdString();
 
@@ -208,5 +216,6 @@ QString DatabaseHandler::getSongFP(int PKID)
     return FP;
 
 }
+
 
 
