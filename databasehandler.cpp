@@ -175,9 +175,9 @@ void DatabaseHandler::DBpopulate(QDir dir)
 }
 
 /*!
- * \brief DatabaseHandler::queryDB
- * \param query
- * \return
+ * \brief DatabaseHandler::queryDB searches db and returns all relavent results for search string. Searches artist, album and title
+ * \param query search query as QString
+ * \return returns MD struct vector with all results
  */
 std::vector <MD> DatabaseHandler::queryDB(QString query)
 {
@@ -203,7 +203,11 @@ std::vector <MD> DatabaseHandler::queryDB(QString query)
 
     return MDresult;
 }
-
+/*!
+ * \brief DatabaseHandler::getSongFP looks through DB to get filepath of where song is
+ * \param PKID int representing where the song is in the DB
+ * \return file path where song is
+ */
 QString DatabaseHandler::getSongFP(int PKID)
 {
     QString FP;

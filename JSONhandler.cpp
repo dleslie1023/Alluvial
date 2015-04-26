@@ -10,7 +10,11 @@ JSONHandler::~JSONHandler()
 {
 
 }
-
+/*!
+ * \brief JSONHandler::generateResults generates a QJsonArray of results for a search query
+ * \param query QString representing a search query
+ * \return QJsonArray of results for a search query. Results are QJsonObjects called media objects.
+ */
 QJsonArray JSONHandler::generateResults(QString query)
 {
     QJsonObject test;

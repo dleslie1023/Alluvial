@@ -9,7 +9,11 @@ songHandler::~songHandler()
 {
 
 }
-
+/*!
+ * \brief songHandler::getSong opens up the db, given a PKID, returns song as QBytearray
+ * \param PKID number representing unique song in DB
+ * \return returns song as QBytearray
+ */
 QByteArray songHandler::getSong(int PKID)
 {
     DatabaseHandler *dub = new DatabaseHandler();
