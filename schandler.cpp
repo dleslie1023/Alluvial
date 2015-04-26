@@ -1,6 +1,6 @@
 #include "schandler.h"
 
-SCHandler::SCHandler()
+SCHandler::SCHandler(QObject *parent)
 {
     raw_results = QJsonArray();
 }
@@ -25,10 +25,12 @@ int SCHandler::query(QString key, QString value){
     QEventLoop eventLoop;
     QUrl url(SC_TRACKS_URL);
     QUrlQuery query;
+    query.addQueryItem("downloadable", "true");
+    query.addQueryItem(key, value);
+
     query.addQueryItem("client_id", SC_CLIENT_ID);
 
-    query.addQueryItem("download_url","https");
-    query.addQueryItem(key, value);
+
 
     url.setQuery(query.query());
     qDebug() << url;
@@ -62,15 +64,12 @@ int SCHandler::query(QString key, QString value){
 QJsonValue SCHandler::format(QJsonValue initial){
     QJsonObject jobj = initial.toObject();
     QString length;
-    qDebug() << jobj["duration"].toInt();
     if (jobj["duration"].toInt() > 0){
         QString minutes;
         QString seconds;
         int duration = jobj["duration"].toInt()/1000; //ain't nobody got time for accuracy
-        qDebug() << duration;
         minutes = QString::number(duration/60);
         seconds = QString::number(duration%60);
-        qDebug() << "minutes" << minutes << " seconds" << seconds;
         if(duration/60 < 10)
             minutes = QString("0"+minutes);
         if(duration%60 < 10)
@@ -106,6 +105,7 @@ QJsonArray SCHandler::search(QString value, QString key){
         results.append(format(raw_results[i]));
     }
 
+    emit onSearchComplete(&results);
     return results;
 }
 
@@ -126,7 +126,6 @@ QByteArray SCHandler::request_song(QString download_url, QString target){
     // create custom temporary event loop on stack
     QNetworkRequest request;
     request.setRawHeader("User-Agent", USER_AGENT);
-    QString local_path;
     QEventLoop eventLoop;
     QString req_url = download_url;
     QUrl url(req_url);
