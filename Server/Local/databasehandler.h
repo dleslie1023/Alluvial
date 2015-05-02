@@ -14,6 +14,7 @@
 #include <QSqlQuery>
 #include <QDirIterator>
 #include <stdlib.h>
+#include <QStringList>
 using std::string;
 
 //struct that contains needed metadata in QString and uint
@@ -23,7 +24,10 @@ struct MD{
     signed int PKID, track_num, length_min, length_sec;
 };
 
-
+/*!
+ * \brief This DatabaseHandler class contains all database functions from creating them, to their
+ * \       tables, filing them with data to retrieving their contents.
+ */
 class DatabaseHandler : public QObject
 {
 public:
@@ -37,7 +41,18 @@ public:
     void DBpopulate(QDir dir);
     std::vector <MD> queryDB(QString query);
     QString getSongFP(int PKID);
+    bool insertPlaylist(QString name, QString filepath);
+    QString retrievePlaylist(QString name);
+    QStringList retrieveAllPlaylists();
+
+    /*!
+     * \brief this global variable is needed so multiple functions
+     * \       can execute commands on the same sqlquery (i.e. open db, create tables, populate db)
+     */
     QSqlQuery query;
+    /*!
+     * \brief global db variable that all db code acts on.
+     */
     QSqlDatabase db;
 private:
 

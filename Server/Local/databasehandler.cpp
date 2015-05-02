@@ -12,7 +12,9 @@ DatabaseHandler::~DatabaseHandler()
 
 /*!
  * \brief ripMetaData: This function takes the QString representing a song in the file directory
- * \                    and returns a meta data struct using taglib
+ * \                    and returns a meta data struct using taglib. It does so by being given a file
+ * \                    and generating a Taglib fileref that have several methods associated with it
+ * \                    that can be used to obtain metadata.
  * \param file We pass this function one QString representing a song in the file system
  * \return The function returns a struct containing the meta data for the song.
  */
@@ -48,7 +50,8 @@ MD DatabaseHandler::ripMetaData(QString file)
 }
 /*!
  * \brief This function is passed a filePath and checks to see if it is a
- * \      legal music file.
+ * \      legal music file. It does so using QTs built in QMimeDatabase. Support
+ * \      for more audio types can be added here.
  * \param file the param contains a QString representation of a file path
  * \return returns true is
  */
@@ -71,7 +74,9 @@ bool DatabaseHandler::isMusic(const QString file)
     }
 }
 /*!
- * \brief D Function inits a database and populates it.
+ * \brief  Function inits a database and populates it. The location of the directory
+ * \        where the songs are acquired is set here. First the db is opened, tables
+ * \        are generated, and the db is populated.
  * \return Returns true if successful, false otherwise
  */
 bool DatabaseHandler::DBInit()
@@ -81,13 +86,17 @@ bool DatabaseHandler::DBInit()
     QDir dir("/home/moe/Desktop/pullSongs");
     openResult = openDB();
     tableResult = createTable();
-    std::cout << openResult << "\n";
-    std::cout << tableResult << "\n";
+    qDebug() << openResult;
+    qDebug() << tableResult;
     DBpopulate(dir);
+    qDebug() << openResult;
+    qDebug() << tableResult;
     return true;
 }
 /*!
  * \brief  Function opens the database in user home directory
+ * \        Logic is built in to see if it already exists, if it
+ * \        does, then we simply open a handle to it
  * \return returns if the database was opened successfully
  */
 bool DatabaseHandler::openDB()
@@ -111,6 +120,8 @@ bool DatabaseHandler::openDB()
 }
 /*!
  * \brief creates the table to store all metadata for songs.
+ * \      also creates the table to hold the playlists. Does so using
+ * \      the global query variable.
  * \return returns if table was created successfully
  */
 bool DatabaseHandler::createTable()
@@ -136,9 +147,7 @@ bool DatabaseHandler::createTable()
         query.exec("create table Playlist "
                           "(id integer primary key, "
                           "name varchar, "
-                          "db_pkid varchar, "
-                          "sc_urls varchar, "
-                          "sp_uris varchar)");
+                          "filepath varchar)");
     }
     //check to make sure tables created
     std::cout << query.lastError().text().toStdString();
@@ -147,6 +156,8 @@ bool DatabaseHandler::createTable()
 }
 /*!
  * \brief Runs iterator function to grab all the metadata from the given directory
+ * \      Checks the directory recursively. uses my MD struct to get the metadata
+ * \      of the given file obtained by the iterator.
  * \param dir allows you to pick which directory to iterate through to get songs
  */
 void DatabaseHandler::DBpopulate(QDir dir)
@@ -154,7 +165,7 @@ void DatabaseHandler::DBpopulate(QDir dir)
 
     QDirIterator it(dir, QDirIterator::Subdirectories);
     bool ret = false;
-    if(db.open())
+    if(db.open()){
         while (it.hasNext()) {
             //TODO: Check database for redundant entries[
             QString file(dir.absoluteFilePath(it.next()));
@@ -167,15 +178,17 @@ void DatabaseHandler::DBpopulate(QDir dir)
               .arg(md.title).arg(md.artist).arg(md.album).arg(md.genre).arg(md.filepath).arg(md.track_num)
               .arg(md.PKID).arg(md.length_min).arg(md.length_sec));
 
-              //qDebug() << md.title << ret << "\n";
+              qDebug() << md.title << ret << "\n";
               //qDebug() << query.lastError().text();
 
             }
         }
+    }
 }
 
 /*!
- * \brief DatabaseHandler::queryDB searches db and returns all relavent results for search string. Searches artist, album and title
+ * \brief searches db and returns all relavent results for search string.
+ * \      Searches artist, album and title with LIKE keyword to grab all possible results.
  * \param query search query as QString
  * \return returns MD struct vector with all results
  */
@@ -204,7 +217,7 @@ std::vector <MD> DatabaseHandler::queryDB(QString query)
     return MDresult;
 }
 /*!
- * \brief DatabaseHandler::getSongFP looks through DB to get filepath of where song is
+ * \brief looks through DB to get filepath of where song is
  * \param PKID int representing where the song is in the DB
  * \return file path where song is
  */
@@ -218,6 +231,55 @@ QString DatabaseHandler::getSongFP(int PKID)
     }
 
     return FP;
+
+}
+
+/*!
+ * \brief Inserts a playlist into the db
+ * \param name this is the name of the playlist that will be stored in the db
+ * \param filepath this is the path of the json file that contains the playlist
+ * \return  returns true if playlist set was successful
+ */
+bool DatabaseHandler::insertPlaylist(QString name, QString filepath)
+{
+    bool ret = false;
+    QSqlQuery queryPL;
+    if(db.open()){
+        bool ret = queryPL.exec(QString("INSERT INTO Playlist values(NULL,'%1','%2')")
+        .arg(name).arg(filepath));
+
+    }
+    return ret;
+}
+/*!
+ * \brief Gets the filepath of the searched for playlist from the db
+ * \param name of the playlist being retrieved
+ * \return returns filepath of json object
+ */
+QString DatabaseHandler::retrievePlaylist(QString name)
+{
+    QString filepath;
+    QSqlQuery queryPL;
+    if(db.open()){
+        queryPL.exec(QString("SELECT * FROM Playlist WHERE name = '%1'").arg(name));
+    }
+    while(queryPL.next()){
+        filepath = queryPL.value(2).toString();
+    }
+    return filepath;
+
+}
+
+QStringList DatabaseHandler::retrieveAllPlaylists()
+{
+    QStringList result;
+    QSqlQuery queryPL;
+    if(db.open()){
+        queryPL.exec(QString("SELECT * FROM Playlist"));
+    }
+    while(queryPL.next()){
+        result.append(queryPL.value(2).toString());
+    }
 
 }
 

@@ -11,7 +11,8 @@ JSONHandler::~JSONHandler()
 
 }
 /*!
- * \brief JSONHandler::generateResults generates a QJsonArray of results for a search query
+ * \brief generates a QJsonArray of results for a search query
+ * \      Iterates through all results and turns them into transmitable data
  * \param query QString representing a search query
  * \return QJsonArray of results for a search query. Results are QJsonObjects called media objects.
  */
@@ -30,10 +31,17 @@ QJsonArray JSONHandler::generateResults(QString query)
     for(int i = 0; i < numOfMD; i++){
         std::stringstream sm;
         std::stringstream ss;
+        string stringLengthTemp;
         sm <<  MDresult.at(i).length_min;
-        ss <<  MDresult.at(i).length_sec;
-        string stringLengthTemp = sm.str() + ":" + ss.str();
+        ss << MDresult.at(i).length_sec;
+        int secs = MDresult.at(i).length_sec;
+        if(secs < 10)
+            stringLengthTemp = sm.str() + ":0" + ss.str();
+        else {
+            stringLengthTemp = sm.str() + ":" + ss.str();
+        }
         QString qstrLength = QString::fromStdString(stringLengthTemp);
+        qDebug() << qstrLength;
         QJsonObject media{
             {"hash", MDresult.at(i).PKID},
             {"order",""},

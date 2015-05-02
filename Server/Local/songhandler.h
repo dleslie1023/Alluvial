@@ -3,6 +3,10 @@
 #include <QByteArray>
 #include <databasehandler.h>
 
+/*!
+ * \brief The songHandler class simply gets songs for the client based
+ * \       on song requests.
+ */
 class songHandler
 {
 public:

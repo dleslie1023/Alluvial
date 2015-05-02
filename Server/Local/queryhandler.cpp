@@ -10,7 +10,8 @@ queryhandler::~queryhandler()
 
 }
 /*!
- * \brief queryhandler::getResults gets the result QJsonArray
+ * \brief gets the result QJsonArray
+ * \
  * \param query query in a QString
  * \return QJsonArray result
  */
