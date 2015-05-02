@@ -4,8 +4,11 @@
 #include <QObject>
 #include "JSONhandler.h"
 
-
-class queryhandler : public QObject
+/*!
+ * \brief The queryhandler class handles queries from the client and
+ * \       returns resuls to them
+ */
+class queryhandler
 {
     Q_OBJECT
 public:
