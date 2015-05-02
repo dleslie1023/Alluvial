@@ -4,9 +4,7 @@
 #include "activesockets.h"
 
 /*!
- * \brief This class holds references to each client connection, along with
- * some basic getters and setters for easier access. This class should only be
- * instantiated once per application.
+ * \brief Initializes the list of client connections.
  *
  * \param parent
  */

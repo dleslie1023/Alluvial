@@ -2,8 +2,9 @@
 
 
 /*!
- * \brief This class provides a clean interface to the various modules involved
- * in finding music
+ * \brief Provides a clean interface to the various modules involved
+ * in finding music. Has interfaces to retrieve a byte array representing a media
+ * file given a unique song hash and to search the various media sources for music.
  * \param parent
  */
 MediaHandler::MediaHandler(QObject *parent) : QObject(parent)
@@ -37,9 +38,11 @@ MediaHandler::~MediaHandler()
 }
 
 /*!
- * \brief This method takes in a hash
- * \param hash
- * \return
+ * \brief Take in a unique song hash corresponding to a media file
+ * and return a QByteArray of that media file. Return an empty QByteArray when the result
+ * is invalid, as well as emitting an error signal.
+ * \param hash the unique song hash.
+ * \return the media file.
  */
 QByteArray MediaHandler::getMediaFromHash(QString hash)
 {
@@ -59,7 +62,17 @@ QByteArray MediaHandler::getMediaFromHash(QString hash)
 }
 
 /*!
- * \brief This function returns a valid results object for a given search query.
+ * \brief Dispatch search to all media source handlers and manages their results.
+ *
+ * This method first checks the completedSearches map for already-executed queries
+ * matching the passed-in query string, and sends those results on if the query is
+ * already present in the cache.
+ * In the case that the query is new, this method instantiates a new SearchResult
+ * object, connects it to all the necessary signals, and then calls each media
+ * source's search function. The SearchResult object will handle all data collection,
+ * formatting, and marshaling.
+ * Finally, this function calls processQueue(), just in case there is an object
+ * waiting to be popped off the queue.
  * \param query The search string
  * \return A QJsonObject representing the results of the query.
  */
@@ -80,8 +93,8 @@ void MediaHandler::search(QString query)
     /// we now hook up all the needed signals to this object to ensure success
     connect(search, &SearchResult::searchProcessingComplete,
             this, &MediaHandler::processQueue);
-//    connect(spotify, SIGNAL(onSearchComplete(QJsonArray)),
-//            search, SLOT(onSpotifySearchComplete(QJsonArray)));
+//    connect(spotify, &QtLibSpotifyHandler::onSearchComplete,
+//            search, &SearchResult::onSpotifySearchComplete);
     connect(db, &queryhandler::onSearchComplete,
             search, &SearchResult::onDbSearchComplete);
     connect(soundcloud, &SCHandler::onSearchComplete,

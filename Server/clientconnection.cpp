@@ -5,16 +5,11 @@
 #include <unistd.h>
 
 /*!
- * \brief This class encapsulates and represents a single client's connection.
- * It handles all logic and state regarding this client's communication to the
- * server, including such things as the socket itself and all dispatching logic.
- *
- * It essentially emits signals when new communication occurs, and gains control
- * of the event loop long enough to do its thing and then hand control back
- * to the main server process.
+ * Instantiates socket and mediaHandler pointers from arguments, and connects
+ * textMessageReceived() signal of socket to onTextMessageReceived().
  * \param parent
- * \param sock The socket of the client connection this instance of the object will
- * be handling.
+ * \param mediaHandler a reference to the parent mediaHandler
+ * \param sock Reference to the client socket object will be interfacing with.
  */
 ClientConnection::ClientConnection(QWebSocket *sock, MediaHandler *mediaHandler, QObject *parent)  : QObject(parent)
 {
@@ -162,14 +157,16 @@ void ClientConnection::_handleSearchReq(QJsonObject req)
     mediaHandler->search(query);
 }
 
+/*!
+ * \brief Complete final formatting of the search response JSON, and send the
+ * now-fully-formed response to the client.
+ * \param response response object minus the final outer field.
+ */
 void ClientConnection::returnSearchResponse(QJsonObject response)
 {
     QJsonObject fullResponse;
     fullResponse["response_type"] = "search";
     fullResponse["response"] = response;
-
-    qDebug() << "Sending search result:";
-    qDebug() << QString(QJsonDocument(fullResponse).toJson());
 
     socket->sendTextMessage(QJsonDocument(fullResponse).toJson());
 }

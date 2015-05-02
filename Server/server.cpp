@@ -5,10 +5,9 @@
 #include "server.h"
 
 /*!
- * \brief This class is the top-level server class. It starts up all the needed
- * parameters, hooks up all the necessary signals, etc. Right now it's hard-coded
- * to have the name "Alluvial Server" and to start in non-secure mode. This may
- * change in the future.
+ * \brief Instatiates QWebSocketServer, ActiveSockets, and MediaHandler singletons,
+ * calls initServer() to set up the server, and sets up signals and slots for
+ * the class to respond to new and closed connections.
  *
  * \param parent
  */
@@ -26,9 +25,8 @@ Server::Server(QObject *parent) : QObject(parent)
 }
 
 /*!
- * \brief Sets up server, instantiates all singleton handlers, and starts
- * the server listening on all interfaces on the specified port. By default the
- * server is set to listen on port 8900.
+ * \brief Sets up server and starts it listening on all interfaces on the
+ * specified port. By default the server is set to listen on port 8900.
  */
 void Server::initServer(quint64 port)
 {
@@ -58,7 +56,7 @@ void Server::initServer(quint64 port)
 }
 
 /*!
- * \brief Called when a new connection is made. This method receives the
+ * \brief Slot called when a new connection is made. This method receives the
  * new connection, creates a new ClientConnection object, and stores it in the
  * ActiveSockets instance associated with the class.
  */

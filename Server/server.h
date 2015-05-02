@@ -13,6 +13,13 @@
 #include "clientconnection.h"
 #include "activesockets.h"
 
+/*!
+ * \brief The Server class is the top-level server class.
+ *
+ * It starts up all the needed parameters, hooks up all the necessary signals, etc.
+ * Right now it's hard-coded to have the name "Alluvial Server" and to start in
+ * non-secure mode. This may change in the future.
+ */
 class Server : public QObject
 {
     Q_OBJECT
@@ -26,12 +33,19 @@ public slots:
 
 private slots:
     void handleResponse();
-//    void onTextMessageReceived(QString doc);
-//    void onTextFrameReceived(QString doc, bool last);
 private:
+    /*!
+     * \brief Websocket server that manages connections with clients.
+     */
     QWebSocketServer *server;
     void initServer(quint64 port);
+    /*!
+     * \brief ActiveSockets instance
+     */
     ActiveSockets *sockets;
+    /*!
+     * \brief The media handler object instantiated by the server
+     */
     MediaHandler *mediaHandler;
 };
 

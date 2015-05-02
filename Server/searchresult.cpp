@@ -3,8 +3,10 @@
 ///TODO: Re-add spotify
 
 /*!
- * \brief This object handles the entire lifecycle of a search.
- * \param query
+ * \brief Creates new empty QJsonArrays for all the different result objects,
+ * and instantiates a new instance of SimpleCrypt for creating hashes.
+ * \param parent
+ * \param query The search query this object encapsulates.
  */
 SearchResult::SearchResult(QString query, QObject *parent) : QObject(parent)
 {
@@ -19,8 +21,16 @@ SearchResult::SearchResult(QString query, QObject *parent) : QObject(parent)
 }
 
 /*!
- * \brief SearchResult::onDbSearchComplete
- * \param obj
+ * \brief Callback for when local database searches complete.
+ *
+ * This function receives a QJsonArray that contains the full search results
+ * from the local database's search query. It then sets the global dbRes pointer
+ * so that the SearchResult object can keep track of these results after the callback
+ * completes, and flags the DB_COMPLETE boolean as true.
+ *
+ * Finally, it checks if all the callbacks have fired, and if it has, constructs
+ * the full result.
+ * \param obj A pointer to the QJsonArray containing the database's search results.
  */
 void SearchResult::onDbSearchComplete(QJsonArray *obj)
 {
@@ -40,8 +50,16 @@ void SearchResult::onDbSearchComplete(QJsonArray *obj)
 }
 
 /*!
- * \brief SearchResult::onSoundcloudSearchComplete
- * \param obj
+ * \brief Callback for when SoundCloud searches complete.
+ *
+ * This function receives a QJsonArray that contains the full search results
+ * from SoundCloud's search query. It then sets the global scRes pointer
+ * so that the SearchResult object can keep track of these results after the callback
+ * completes, and flags the SOUNDCLOUD_COMPLETE boolean as true.
+ *
+ * Finally, it checks if all the callbacks have fired, and if it has, constructs
+ * the full result.
+ * \param obj A pointer to the QJsonArray containing the SoundCloud search results.
  */
 void SearchResult::onSoundcloudSearchComplete(QJsonArray *obj)
 {
@@ -61,8 +79,16 @@ void SearchResult::onSoundcloudSearchComplete(QJsonArray *obj)
 }
 
 /*!
- * \brief SearchResult::onSpotifySearchComplete
- * \param obj The completed array
+ * \brief Callback for when Spotify searches complete.
+ *
+ * This function receives a QJsonArray that contains the full search results
+ * from Spotify's search query. It then sets the global spotifyRes pointer
+ * so that the SearchResult object can keep track of these results after the callback
+ * completes, and flags the SPOTIFY_COMPLETE boolean as true.
+ *
+ * Finally, it checks if all the callbacks have fired, and if it has, constructs
+ * the full result.
+ * \param obj A pointer to the QJsonArray containing the Spotify search results.
  */
 void SearchResult::onSpotifySearchComplete(QJsonArray *obj)
 {
@@ -71,7 +97,7 @@ void SearchResult::onSpotifySearchComplete(QJsonArray *obj)
         return;
     }
     spotifyRes = obj;
-    SOUNDCLOUD_COMPLETE = true;
+    SPOTIFY_COMPLETE = true;
     //    if (SPOTIFY_COMPLETE && SOUNDCLOUD_COMPLETE && DB_COMPLETE) {
     //        constructFullResult();
     //    }
@@ -87,6 +113,7 @@ void SearchResult::onSpotifySearchComplete(QJsonArray *obj)
  * media hashes, and stores the new json object with the hash into the fullResults
  * object for later serialization.
  * \param arr the array of input objects
+ * \param type The type of search result. used in generating the hash.
  */
 void SearchResult::insertObjectsIntoResults(QJsonArray *arr, SearchResultType type)
 {
@@ -124,7 +151,9 @@ void SearchResult::insertObjectsIntoResults(QJsonArray *arr, SearchResultType ty
 }
 
 /*!
- * \brief SearchResult::getSearchResults
+ * \brief Return a pointer to the fully generated results object.
+ *
+ * Used when retrieving cached result.
  * \return
  */
 QJsonObject *SearchResult::getSearchResults()
@@ -135,7 +164,13 @@ QJsonObject *SearchResult::getSearchResults()
 }
 
 /*!
- * \brief SearchResult::constructFullResult
+ * \brief Constructs the full JSON search result to be sent to the client.
+ *
+ * It inserts all the search results into the object's fullResults object, then constructs
+ * the QJsonObject containing the full search result.
+ *
+ * Once it finishes all this, it sets the SEARCH_COMPLETE flag to true and emits
+ * the searchProcessingComplete() signal for the ClientConnection object.
  */
 void SearchResult::constructFullResult()
 {
@@ -176,7 +211,7 @@ void SearchResult::constructFullResult()
 }
 
 /*!
- * \brief SearchResult::~SearchResult
+ * \brief Handles destruction of the object in a safe and secure way.
  */
 SearchResult::~SearchResult()
 {

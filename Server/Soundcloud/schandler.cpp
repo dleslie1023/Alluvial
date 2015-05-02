@@ -128,7 +128,6 @@ QJsonArray SCHandler::search(int count, QString value, QString key){
 }
 
 QByteArray SCHandler::request_song(QString download_url){
-    QByteArray barry;
     // create custom temporary event loop on stack
     QNetworkRequest request;
     request.setRawHeader("User-Agent", USER_AGENT);
