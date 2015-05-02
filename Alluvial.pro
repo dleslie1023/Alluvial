@@ -20,7 +20,8 @@ SOURCES += main.cpp \
     Server/Spotify/qtlibspotify.cpp \
     Server/Spotify/qtlibspotifyhandler.cpp \
     Server/Settings/settings_storage.cpp \
-    Server/Settings/jsonformatter.cpp
+    Server/Settings/jsonformatter.cpp \
+    main.cpp
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
