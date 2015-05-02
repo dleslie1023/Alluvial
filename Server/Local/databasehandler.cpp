@@ -78,7 +78,7 @@ bool DatabaseHandler::DBInit()
 {
     bool openResult;
     bool tableResult;
-    QDir dir("/home/sri/Music");
+    QDir dir("/home/moe/Desktop/pullSongs");
     openResult = openDB();
     tableResult = createTable();
     std::cout << openResult << "\n";
@@ -86,7 +86,6 @@ bool DatabaseHandler::DBInit()
     DBpopulate(dir);
     return true;
 }
-
 /*!
  * \brief  Function opens the database in user home directory
  * \return returns if the database was opened successfully
