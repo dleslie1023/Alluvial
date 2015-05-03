@@ -124,9 +124,9 @@ QJsonArray SCHandler::search(int count, QString value, QString key){
         if(result.compare(QString("")) != 0)
             results.append(format(raw_results[i]));
     }
-    if(count > num_queried)
-        count = num_queried;
-    for(int i=0; i<40; i++){
+    if(count > results.size())
+        count = results.size();
+    for(int i=0; i<count; i++){
         results.append(format(raw_results[i]));
     }
     emit onSearchComplete(&results);
