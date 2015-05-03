@@ -14,7 +14,8 @@ JSONHandler::~JSONHandler()
 }
 /*!
  * \brief generates a QJsonArray of results for a search query
- * \      Iterates through all results and turns them into transmitable data
+ *
+ * Iterates through all results and turns them into transmitable data
  * \param query QString representing a search query
  * \return QJsonArray of results for a search query. Results are QJsonObjects called media objects.
  */

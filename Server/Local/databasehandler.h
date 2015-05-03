@@ -18,15 +18,56 @@
 using std::string;
 
 //struct that contains needed metadata in QString and uint
+/*!
+ * \brief The MD struct holds all the metadata associated with a particular song.
+ *
+ * This struct is partially populated by taglib during metadata querying operations,
+ * with the exception of the PKID field, which is populated by the DatabaseHandler
+ * with the primary database key of the file.
+ */
 struct MD{
 
-    QString filepath, artist, album, title, genre;
-    signed int PKID, track_num, length_min, length_sec;
+    /*!
+     * \brief Path to the song file on disk.
+     */
+    QString filepath;
+    /*!
+     * \brief Artist name. Taken from "artist" tag on file.
+     */
+    QString artist;
+    /*!
+     * \brief Album name. Taken from "album" tag on  file.
+     */
+    QString album;
+    /*!
+     * \brief Song title. Taken from "title" tag on file.
+     */
+    QString title;
+    /*!
+     * \brief Genre. Taken from "genre" tag on file.
+     */
+    QString genre;
+    /*!
+     * \brief Primary key of this song in the database.
+     */
+    signed int PKID;
+    /*!
+     * \brief Track number. Taken from "track_number" tag on file.
+     */
+    signed int track_num;
+    /*!
+     * \brief This and length_sec comprise the running time of the song.
+     */
+    signed int length_min;
+    /*!
+     * \brief This and length_min comprise the running time of the song.
+     */
+    signed int length_sec;
 };
 
 /*!
  * \brief This DatabaseHandler class contains all database functions from creating them, to their
- * \       tables, filing them with data to retrieving their contents.
+ * tables, filing them with data to retrieving their contents.
  */
 class DatabaseHandler : public QObject
 {

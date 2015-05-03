@@ -6,7 +6,7 @@
 
 /*!
  * \brief The queryhandler class handles queries from the client and
- * \       returns resuls to them
+ * returns resuls to them
  */
 class queryhandler : public QObject
 {

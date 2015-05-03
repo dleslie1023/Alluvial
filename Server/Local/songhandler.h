@@ -5,7 +5,7 @@
 
 /*!
  * \brief The songHandler class simply gets songs for the client based
- * \       on song requests.
+ * on song requests.
  */
 class songHandler
 {

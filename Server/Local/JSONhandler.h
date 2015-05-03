@@ -10,7 +10,7 @@
 
 /*!
  * \brief The JSONHandler class handles creating the JSON results to be
- * \       sent to the client.
+ * sent to the client.
  */
 class JSONHandler : public QObject
 {

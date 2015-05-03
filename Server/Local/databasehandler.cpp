@@ -11,10 +11,12 @@ DatabaseHandler::~DatabaseHandler()
 }
 
 /*!
- * \brief ripMetaData: This function takes the QString representing a song in the file directory
- * \                    and returns a meta data struct using taglib. It does so by being given a file
- * \                    and generating a Taglib fileref that have several methods associated with it
- * \                    that can be used to obtain metadata.
+ * \brief Takes in the QString representing a song in the file directory
+ * and returns a meta data struct using taglib.
+ *
+ * It does so by being given a file and generating a Taglib fileref that have
+ * several methods associated with it that can be used to obtain metadata.
+ *
  * \param file We pass this function one QString representing a song in the file system
  * \return The function returns a struct containing the meta data for the song.
  */

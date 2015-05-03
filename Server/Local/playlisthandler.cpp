@@ -11,9 +11,10 @@ playListHandler::~playListHandler()
 }
 /*!
  * \brief Function is passed a QJsonObject representing a playList
- * \       it turns it into a QJsonDocument. A json file is created
- * \       in the filesystem and saved. A database entry representing
- * \       this file is made.
+ * it turns it into a QJsonDocument. A json file is created
+ * in the filesystem and saved. A database entry representing
+ * this file is made.
+ *
  * \param playlist QJsonObject representing a playList
  * \return true if playlist set was successful
  */
@@ -37,8 +38,8 @@ bool playListHandler::setPlaylist(QJsonObject playlist)
 }
 /*!
  * \brief Given the name, gets the json file representing the playList
- * \       goes into the db to find the filepath for the playlist json file
- * \       turns that nto a QJsonDocument and then into a QJsonObject which it returns.
+ * goes into the db to find the filepath for the playlist json file
+ * turns that nto a QJsonDocument and then into a QJsonObject which it returns.
  * \param  QString representing the queryed playlist
  * \return QJsonObject representing the playlist query
  */

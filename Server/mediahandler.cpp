@@ -55,6 +55,8 @@ QByteArray MediaHandler::getMediaFromHash(QString hash)
         return soundcloud->request_song(split.at(1));
     } else if (type == "db") {
         return dbSongs->getSong(split.at(1).toInt());
+//    } else if (type == "spotify") {
+//        return spotify->getMedia(split.at(1));
     } else {
         /// error handling passed up through here
         return QByteArray();

@@ -5,7 +5,7 @@
 
 /*!
  * \brief The playListHandler class handles the saving and
- * \       retrieving of playlists
+ * retrieving of playlists.
  */
 class playListHandler
 {
