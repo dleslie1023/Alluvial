@@ -31,11 +31,9 @@ class SCHandler : public QObject
 {
     Q_OBJECT
 
-signals:
-    void onSearchComplete(QJsonArray *arr);
-
 private:
     QJsonArray raw_results;
+
 
     /*!
      \brief Used by search() to make the call to the Soundcloud API using
@@ -85,7 +83,6 @@ public:
     QJsonArray search(QString value, QString key=QString("q"));
 
     /*!
-     \warning RETURNS ALL RESULTS. NOT JUST DOWNLOADABLE
      \brief Searches the Soundcloud database using a key and associated
             value. This pair corresponds to song metadata that is used
             to request song results from Soundcloud. The search results
@@ -101,7 +98,6 @@ public:
     QJsonArray search(int count, QString value, QString key=QString("q"));
 
     /*!
-     \warning RETURNS ALL RESULTS. NOT JUST DOWNLOADABLE
      \brief Requests a song from Soundcloud using the download_url
             supplied by a Soundcloud query(). The value associated
             with the download_url key provides access to an interstitial
@@ -118,7 +114,7 @@ public:
     QByteArray request_song(QString download_url, QString target=QString("../"));
 
 signals:
-    void onSearchComplete(QJsonArray jarray);
+    void onSearchComplete(QJsonArray *jarray);
 
 };
 #endif // SCHANDLER_H
